@@ -1,0 +1,281 @@
+
+#include <iostream>
+using namespace std;
+#include <iostream>
+#include <string>
+//1.1
+/*
+class Date
+{
+public:
+    Date(int d = 0, int m = 0, int y = 0)
+    {
+        setDate(d, m, y);
+        std::cout << "Constructor" << std::endl;
+    }
+
+    Date(const Date& date)
+    {
+        setDate(date.day, date.month, date.year);
+        std::cout << "Constructor copy" << std::endl;
+    }
+
+    ~Date()
+    {
+
+    }
+
+    int getDay() const
+    {
+        return day;
+    }
+
+    int getMonth() const
+    {
+        return month;
+    }
+
+    int getYear() const
+    {
+        return year;
+    }
+
+    void setDay(int day)
+    {
+        this->day = day;
+    }
+
+    void setMonth(int month)
+    {
+        this->month = month;
+    }
+
+    void setYear(int year)
+    {
+        this->year = year;
+    }
+
+    void setDate(int day, int month, int year)
+    {
+        if (isValidDate(day, month, year))
+        {
+            setDay(day);
+            setMonth(month);
+            setYear(year);
+        }
+        else {
+            throw std::string("Not valid date");
+        }
+    }
+
+    void print() const
+    {
+        std::cout << day << '.'
+            << month << '.'
+            << year << std::endl;
+    }
+
+    void print1() const
+    {
+
+
+    }
+
+
+    static bool isValidDate(int day, int month, int year)
+    {
+        if ((day < 1 && day>31) && (month < 1 && month>12))
+        {
+            std::cout << "Not valid date" << std::endl;
+        }
+        return true;
+    }
+
+    static bool isLeapYear(int year)
+    {
+
+        return ((year % 4 == 0 && year % 100 != 0) && year % 400);
+
+    }
+
+    static int dayInMonth(int month)
+    {
+        int days[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
+        if (isLeapYear)days[1] = 29;
+        return days[month - 1];
+    }
+
+
+private:
+    int day;
+    int month;
+    int year;
+};
+
+int main()
+{
+    Date d1(5, 1, 1997);
+    d1.print();
+
+    Date d2 = d1;
+    d2.setDay(6);
+    d2.print();
+
+
+    Date d3(d2);
+    d3.print1();
+    system("pause");
+    return 0;
+
+}
+*/
+//3.1
+template <typename T>
+class MATRIX
+{
+private:
+    T** M; // матриця
+    int m; // к-сть рядків
+    int n; // к-сть стовпців
+
+public:
+
+    MATRIX()
+    {
+        n = m = 0;
+        M = nullptr;
+    }
+
+
+    MATRIX(int _m, int _n)
+    {
+        m = _m;
+        n = _n;
+
+
+        M = (T**) new T * [m];
+
+
+        for (int i = 0; i < m; i++)
+            M[i] = (T*)new T[n];
+
+        // Заповнити масив M нулями
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                M[i][j] = 0;
+    }
+
+
+    MATRIX(const MATRIX& _M)
+    {
+
+        m = _M.m;
+        n = _M.n;
+
+        M = (T**) new T * [m];
+        for (int i = 0; i < m; i++)
+            M[i] = (T*) new T[n];
+
+
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                M[i][j] = _M.M[i][j];
+    }
+
+    // методи доступу
+    T GetMij(int i, int j)
+    {
+        if ((m > 0) && (n > 0))
+            return M[i][j];
+        else
+            return 0;
+    }
+
+    void SetMij(int i, int j, T value)
+    {
+        if ((i < 0) || (i >= m))
+            return;
+        if ((j < 0) || (j >= n))
+            return;
+        M[i][j] = value;
+    }
+
+    void Print(const char* ObjName)
+    {
+        cout << "Object: " << ObjName << endl;
+        for (int i = 0; i < m; i++)
+        {
+            for (int j = 0; j < n; j++)
+                cout << M[i][j] << "\t";
+            cout << endl;
+        }
+        cout << "---------------------" << endl << endl;
+    }
+
+    MATRIX operator=(const MATRIX& _M)
+    {
+        if (n > 0)
+        {
+            for (int i = 0; i < m; i++)
+                delete[] M[i];
+        }
+
+        if (m > 0)
+        {
+            delete[] M;
+        }
+
+
+        m = _M.m;
+        n = _M.n;
+
+        M = (T**) new T * [m];
+        for (int i = 0; i < m; i++)
+            M[i] = (T*) new T[n];
+
+        // заповнити значеннями
+        for (int i = 0; i < m; i++)
+            for (int j = 0; j < n; j++)
+                M[i][j] = _M.M[i][j];
+        return *this;
+    }
+
+
+    ~MATRIX()
+    {
+        if (n > 0)
+        {
+
+            for (int i = 0; i < m; i++)
+                delete[] M[i];
+        }
+
+        if (m > 0)
+            delete[] M;
+    }
+};
+
+void main()
+{
+    // тест для класу MATRIX
+    MATRIX<int> M(2, 3);
+    M.Print("M");
+
+    int i, j;
+    for (i = 0; i < 2; i++)
+        for (j = 0; j < 3; j++)
+            M.SetMij(i, j, i + j);
+
+    M.Print("M");
+
+    MATRIX<int> M2 = M;
+    M2.Print("M2");
+
+    MATRIX<int> M3;
+    M3 = M;
+    M3.Print("M3");
+
+    MATRIX<int> M4;
+    M4 = M3 = M2 = M;
+    M4.Print("M4");
+}
